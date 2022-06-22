@@ -1,0 +1,289 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body::-webkit-scrollbar {
+    width: 16px;
+}
+body::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+body::-webkit-scrollbar-thumb {
+    background: lightgray;
+    border: 4px solid transparent;
+    border-radius: 8px;
+    background-clip: content-box;
+}
+
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    outline: none;
+    border: none;
+    background: none;
+    appearance: none;
+
+    &:hover {
+        background-color: rgba(lightgray, 0.5);
+    }
+
+    &:active {
+        background-color: rgba(lightgray, 1);
+    }
+}
+
+.full-container {
+    position: relative;
+    margin: 12px auto;
+    width: 400px;
+}
+
+.menu-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 12px;
+}
+
+.menu-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    button {
+        height: 42px;
+        width: 42px;
+
+        padding: 4px;
+    }
+}
+
+.search-field {
+    display: flex;
+    flex-direction: row;
+    background-color: rgba(lightgray, 0.3);
+    height: 32px;
+    width: 100%;
+
+    input {
+        outline: none;
+        border: none;
+        background: none;
+        appearance: none;
+        flex-grow: 1;
+        padding: 4px;
+        text-indent: 8px;
+    }
+
+    button {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+.memo-list-container {
+    .memo-list {
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 12px;
+
+        .memo-item {
+            background-color: #fff7d1;
+            width: 100%;
+            font-size: 14px;
+            padding: 12px;
+            // transition: itemShow 0.2s forwards;
+            transition: all 0.2 cubic-bezier(0.075, 0.82, 0.165, 1);
+
+            p.updated-date {
+                text-align: end;
+                font-size: 8px;
+                pointer-events: none;
+            }
+
+            .memo-content {
+                font-size: 14px;
+                max-height: calc(5em + 8px + 12px + 2px);
+                overflow: hidden;
+                pointer-events: none;
+            }
+
+            &:hover {
+                filter: brightness(95%);
+            }
+
+            &.no-item {
+                border: 1px solid lightgray;
+                background-color: rgba(lightgray, 0.3);
+                p {
+                    text-align: center;
+                }
+            }
+        }
+    }
+}
+
+span.size-24 {
+    font-size: 24px;
+    font-variation-settings: 'OPSZ' 24;
+}
+
+span.size-32 {
+    font-size: 32px;
+    font-variation-settings: 'OPSZ' 32;
+}
+
+span.size-40 {
+    font-size: 40px;
+    font-variation-settings: 'OPSZ' 40;
+}
+
+span.size-48 {
+    font-size: 48px;
+    font-variation-settings: 'OPSZ' 48;
+}
+
+div#modal-container {
+    display: none;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(gray, 0.9);
+    z-index: 1;
+    scroll-behavior: none;
+    overflow: hidden;
+
+    div.close-field {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+    }
+
+    .content-section {
+        width: 400px;
+        max-width: 400px;
+        box-shadow: 0 0 15px 1px rgba(black, 0.2);
+        animation: fadeIn 0.2s forwards;
+
+        .memo-item {
+            background-color: #fff7d1;
+            width: 100%;
+            font-size: 14px;
+            padding: 12px;
+
+            textarea {
+                width: 100%;
+                height: 100%;
+                outline: none;
+                border: none;
+                background: none;
+                appearance: none;
+                resize: none;
+            }
+        }
+    }
+
+    &.opened {
+        display: flex;
+        position: fixed;
+    }
+}
+
+div#popup-menu {
+    display: none;
+    background-color: aliceblue;
+    border: 1px solid rgba(black, 0.2);
+    border-radius: 3px;
+    width: 100px;
+    padding: 5px 0;
+    box-shadow: 0 0 14px 2px rgba(black, 0.1);
+    animation: fadeIn 0.2s forwards;
+
+    .popup-content {
+        display: flex;
+        flex-direction: column;
+
+        button {
+            font-weight: bolder;
+            font-size: 14px;
+            height: 32px;
+        }
+    }
+
+    &.show {
+        display: block;
+        position: absolute;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes itemShow {
+    from {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes itemHide {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    to {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+#test-div {
+    display: block;
+    width: 100px;
+    height: fit-content;
+    margin: 0 auto;
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        transition: height 0.1s linear;
+    }
+
+    li {
+        display: block;
+        background-color: lightcoral;
+        padding: 12px;
+        width: 100%;
+        animation: itemShow 0.2s forwards;
+
+        &.hide {
+            animation: itemHide 0.2s forwards;
+        }
+    }
+}
