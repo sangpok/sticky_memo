@@ -27,7 +27,6 @@ const popupMenuList = document.querySelector('#popup-menu').addEventListener('cl
         showModal();
     } else if (action === 'delete') {
         let itemId = +document.querySelector('#modal-container').dataset.id;
-        console.log(itemId);
         deleteMemoItem(itemId);
     }
 });
@@ -129,19 +128,19 @@ const updateMemoList = () => {
         }
     });
 
-    console.log(
-        `createdIds: ${createdIds}
-        addedList: ${addedList}
-        deletedList: ${deletedList}
-        updatedList: ${updatedList}`
-    );
+    // console.log(
+    //     `createdIds: ${createdIds}
+    //     addedList: ${addedList}
+    //     deletedList: ${deletedList}
+    //     updatedList: ${updatedList}`
+    // );
 
     let parentUl = document.querySelector('#memo-list');
 
     if (updatedList.length !== 0) {
         for (let updatedItem of updatedList) {
-            console.log(updatedItem);
             deleteMemoItem(updatedItem.id, true);
+
             let newItem = createMemoDOM(updatedItem);
             parentUl.appendChild(newItem);
             newItem.style.maxHeight = newItem.offsetHeight + 'px';
@@ -177,7 +176,8 @@ const deleteMemoItem = (memoId, preventUpdate = false) => {
     memoList.splice(lstIdx, 1);
     memoCount--;
     if (!preventUpdate) saveMemoDatas();
-    deleteMemoDOM(memoId);
+    updateMemoList();
+    // deleteMemoDOM(memoId);
 };
 
 const setModalData = (value) => {
@@ -240,13 +240,9 @@ window.addEventListener('keydown', (event) => {
                 content: memoContent,
             };
 
-            console.log(item);
+            let itemIdx = memoList.findIndex((elem) => elem.id === item.id);
 
-            let itemIdx = memoList.filter((elem) => elem.id === item.id)[0];
-
-            console.log(itemIdx);
-
-            if (itemIdx === undefined) {
+            if (itemIdx === -1) {
                 memoList.push(item);
             } else {
                 memoList[itemIdx] = item;

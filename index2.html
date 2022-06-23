@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@40,100,0,0"
+            rel="stylesheet"
+        />
+        <link
+            href="http://fonts.googleapis.com/css?family=Roboto"
+            rel="stylesheet"
+            type="text/css"
+        />
+        <link rel="stylesheet" href="/css/style.css" />
+    </head>
+    <body>
+        <div class="full-container">
+            <div class="menu-container">
+                <div class="menu-list">
+                    <button data-action="addMemo">
+                        <span class="material-symbols-rounded size-32"> add </span>
+                    </button>
+                    <button data-action="settingApp">
+                        <span class="material-symbols-rounded size-24"> settings </span>
+                    </button>
+                </div>
+                <div class="app-title">
+                    <h3>스티커 메모</h3>
+                </div>
+                <div class="search-field">
+                    <input type="text" placeholder="검색..." id="searchMemo" />
+                    <button data-action="searchMemo">
+                        <span class="material-symbols-rounded"> search </span>
+                    </button>
+                </div>
+            </div>
+            <div class="memo-list-container">
+                <ul id="memo-list">
+                    <li class="memo-item no-item">
+                        <p>등록된 메모가 없어요!</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="modal-container">
+            <div class="close-field">
+                <button data-action="close">
+                    <span class="material-symbols-rounded size-48"> close </span>
+                </button>
+            </div>
+            <div class="content-section">
+                <div class="memo-item">
+                    <!-- <input type="text" placeholder="이곳에 입력을 하세요..." /> -->
+                    <textarea
+                        id="memotext"
+                        oninput="autoHeight(this)"
+                        placeholder="이곳에 입력을 하세요..."
+                    ></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div id="popup-menu">
+            <div class="popup-content">
+                <button data-action="edit">수정</button>
+                <button data-action="delete">삭제</button>
+            </div>
+        </div>
+
+        <script src="/js/events2.js"></script>
+    </body>
+</html>
