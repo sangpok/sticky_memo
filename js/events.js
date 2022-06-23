@@ -1,4 +1,5 @@
 let memoList = [];
+let memoCount = 0;
 
 // Item 구조
 // let memoItem = {
@@ -11,7 +12,7 @@ const menuList = document.querySelector('.menu-list').addEventListener('click', 
     let action = event.target.closest('button').dataset.action;
 
     if (action === 'addMemo') {
-        setModalData(memoList.length);
+        setModalData('-1');
         showModal();
     } else if (action === 'settings') {
         alert('settings');
@@ -62,28 +63,29 @@ const loadMemoDatas = () => {
     if (tmpMemoList === null) return;
 
     memoList = JSON.parse(tmpMemoList);
+    memoCount = memoList.length;
 };
 
 const createMemoDOM = (itemInfo) => {
-    const newDiv = document.createElement('div');
+    const newLi = document.createElement('li');
     const newP = document.createElement('p');
     const newDiv2 = document.createElement('div');
     const newP2 = document.createElement('p');
 
-    newDiv.classList.add('memo-item');
+    newLi.classList.add('memo-item');
     newP.classList.add('updated-date');
     newDiv2.classList.add('memo-content');
 
     newP2.innerText = itemInfo.content;
     newDiv2.appendChild(newP2);
     newP.innerText = new Date(itemInfo.updatedDate).toLocaleDateString();
-    newP.dataset.date = itemInfo.updatedDate;
-    newDiv.appendChild(newP);
+    newLi.dataset.date = itemInfo.updatedDate;
+    newLi.appendChild(newP);
 
-    newDiv.appendChild(newDiv2);
-    newDiv.dataset.id = itemInfo.id;
+    newLi.appendChild(newDiv2);
+    newLi.dataset.id = itemInfo.id;
 
-    return newDiv;
+    return newLi;
 };
 
 const updateMemoItem = (memoId) => {
@@ -95,7 +97,7 @@ const updateMemoItem = (memoId) => {
 
     let lstIdx = memoList.findIndex((item) => item.id === memoId);
 
-    itemDate.innerText = memoList[lstIdx].updatedDate;
+    itemDate.innerText = new Date(memoList[lstIdx].updatedDate).toLocaleDateString();
     itemContent.innerText = memoList[lstIdx].content;
 };
 
@@ -106,43 +108,82 @@ const updateMemoList = () => {
         noItem.parentElement.removeChild(noItem);
     }
 
-    let createdItems = document.querySelectorAll('.memo-item[data-id]');
+    let newList = memoList.sort((a, b) => a.updatedDate - b.updatedDate);
 
-    // let newMemoList = memoList.sort((a, b) => a.updatedDate - b.updatedDate);
+    if (newList.length === 0) return;
 
-    // for (let memoItem of newMemoList) {
-    //     let createdItem = document.querySelector(`.memo-item[data-id="${memoItem.id}"]`);
+    let createdItems = [...document.querySelectorAll('#memo-list li')];
+    let createdIds = createdItems.map((item) => +item.dataset.id) || [];
 
-    //     if (createdItem === null) {
-    //         let newItem = createMemoDOM(memoItem);
-    //         document.querySelector('.memo-list').appendChild(newItem);
-    //     } else {
-    //         let tmpDate = +createdItem.querySelector('[data-date]').dataset.date;
+    let deletedList =
+        createdIds.filter((item) => ![...newList.map((item) => item.id)].includes(item)) || [];
 
-    //         if (tmpDate !== memoItem.updatedDate) {
-    //             createdItem.querySelector('[data-date]').dataset.date = memoItem.updatedDate;
-    //             createdItem.querySelector('[data-date]').innerText = new Date(
-    //                 memoItem.updatedDate
-    //             ).toLocaleDateString();
-    //             createdItem.querySelector('.memo-content p').innerText = memoItem.content;
-    //         }
-    //     }
-    // }
+    let addedList = newList.filter((item) => !createdIds.includes(item.id));
+
+    let updatedList = [];
+
+    newList.forEach((item) => {
+        let matchedItem = createdItems.filter((elem) => +elem.dataset.id === item.id);
+        if (matchedItem.length !== 0 && +matchedItem[0]?.dataset.date !== item.updatedDate) {
+            updatedList.push(item);
+        }
+    });
+
+    console.log(
+        `createdIds: ${createdIds}
+        addedList: ${addedList}
+        deletedList: ${deletedList}
+        updatedList: ${updatedList}`
+    );
+
+    let parentUl = document.querySelector('#memo-list');
+
+    if (updatedList.length !== 0) {
+        for (let updatedItem of updatedList) {
+            console.log(updatedItem);
+            deleteMemoItem(updatedItem.id, true);
+            let newItem = createMemoDOM(updatedItem);
+            parentUl.appendChild(newItem);
+            newItem.style.maxHeight = newItem.offsetHeight + 'px';
+        }
+    } else if (deletedList.length !== 0) {
+        for (let deletedItemId of deletedList) {
+            let elem = document.querySelector(`li[data-id="${deletedItemId}"]`);
+            elem.style.maxHeight = '0px';
+            elem.classList.add('hide');
+            memoCount--;
+        }
+    } else if (addedList.length !== 0) {
+        for (let addedItem of addedList) {
+            const newItem = createMemoDOM(addedItem);
+            parentUl.appendChild(newItem);
+            newItem.style.maxHeight = newItem.offsetHeight + 'px';
+            memoCount++;
+        }
+    }
 };
 
-const deleteMemoItem = (memoId) => {
+const deleteMemoDOM = (memoId) => {
+    let parentUl = document.querySelector('#memo-list');
+    let elem = document.querySelector(`li[data-id="${memoId}"]`);
+
+    parentUl.removeChild(elem);
+};
+
+const deleteMemoItem = (memoId, preventUpdate = false) => {
     let lstIdx = memoList.findIndex((item) => item.id === memoId);
-    console.log(lstIdx);
     if (lstIdx === -1) return;
 
     memoList.splice(lstIdx, 1);
-    saveMemoDatas();
-    updateMemoList();
+    memoCount--;
+    if (!preventUpdate) saveMemoDatas();
+    deleteMemoDOM(memoId);
 };
 
 const setModalData = (value) => {
     const myContainer = document.querySelector('#modal-container');
     myContainer.dataset.id = value;
+    if (value === '') myContainer.dataset.id = '';
 };
 
 const showModal = (isOpen = true) => {
@@ -182,6 +223,7 @@ const showPopup = (show = true) => {
         popupMenu.classList.add('show');
     } else {
         popupMenu.classList.remove('show');
+        document.querySelector('#memotext').value = '';
     }
 };
 
@@ -193,17 +235,18 @@ window.addEventListener('keydown', (event) => {
             let memoContent = document.querySelector('#memotext').value;
 
             let item = {
-                id: +myContainer.dataset.id || memoList.length,
+                id: +myContainer.dataset.id < 0 ? memoCount : +myContainer.dataset.id,
                 updatedDate: Date.now(),
                 content: memoContent,
             };
 
-            let itemIdx = memoList.reduce((acc, cur, idx) => {
-                if (cur.id === item.id) return idx;
-                else return acc;
-            }, -1);
+            console.log(item);
 
-            if (itemIdx === -1) {
+            let itemIdx = memoList.filter((elem) => elem.id === item.id)[0];
+
+            console.log(itemIdx);
+
+            if (itemIdx === undefined) {
                 memoList.push(item);
             } else {
                 memoList[itemIdx] = item;
@@ -223,7 +266,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 });
 
 window.addEventListener('contextmenu', (event) => {
-    if (event.target.closest('div')?.className === 'memo-item') {
+    if (event.target.closest('ul')?.id === 'memo-list') {
         event.preventDefault();
 
         setModalData(event.target.dataset.id);
@@ -279,66 +322,3 @@ const mouseY = (evt) => {
         return null;
     }
 };
-
-let testList = [
-    { id: 0, value: 'A' },
-    { id: 1, value: 'B' },
-    { id: 2, value: 'C' },
-];
-
-document.querySelector('#test-div').addEventListener('click', (event) => {
-    if (event.target.id === 'add') {
-        // 추가
-        testList.push({
-            id: testList.length,
-            value: testList.length + 1,
-        });
-    } else if (event.target.id === 'delete') {
-        // 제거
-        // testList.pop();
-        testList.splice(2, 1);
-    }
-    updateList();
-});
-
-const updateList = () => {
-    let curList = [...document.querySelectorAll('#test-ul li')];
-    let curIdList = curList.map((item) => +item.dataset.id);
-
-    let deletedList = curIdList.filter(
-        (item) => ![...testList.map((item) => item.id)].includes(item)
-    );
-
-    let addedList = testList.filter((item) => !curIdList.includes(item.id));
-    console.log(deletedList, addedList);
-
-    if (deletedList.length !== 0) {
-        for (let deletedItemId of deletedList) {
-            let elem = document.querySelector(`li[data-id="${deletedItemId}"]`);
-            elem.classList.add('hide');
-        }
-    } else if (addedList.length !== 0) {
-        let parentUl = document.querySelector('#test-ul');
-
-        for (let addedItem of addedList) {
-            const newLi = document.createElement('li');
-            newLi.dataset.id = addedItem.id;
-            newLi.innerText = addedItem.value;
-            parentUl.appendChild(newLi);
-        }
-    }
-};
-
-let parentUl = document.querySelector('#test-ul');
-parentUl.addEventListener('animationend', (event) => {
-    if (event.target.classList.contains('hide')) {
-        if (parentUl.contains(event.target)) parentUl.removeChild(event.target);
-    }
-});
-parentUl.addEventListener('animationstart', (event) => {
-    parentUl.style.height = `${
-        event.target.offsetHeight * testList.length + 12 * (testList.length - 1)
-    }px`;
-});
-
-updateList();

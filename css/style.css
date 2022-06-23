@@ -1,7 +1,7 @@
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
+  padding: 0;
+  margin: 0;
   font-family: "Roboto", sans-serif;
 }
 
@@ -14,19 +14,19 @@ body::-webkit-scrollbar-track {
 }
 
 body::-webkit-scrollbar-thumb {
-  background: lightgray;
   border: 4px solid transparent;
+  background: lightgray;
   border-radius: 8px;
   background-clip: content-box;
 }
 
 button {
   display: flex;
+  border: none;
+  background: none;
   justify-content: center;
   align-items: center;
   outline: none;
-  border: none;
-  background: none;
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
@@ -39,9 +39,9 @@ button:active {
 }
 
 .full-container {
-  position: relative;
-  margin: 12px auto;
   width: 400px;
+  margin: 12px auto;
+  position: relative;
 }
 
 .menu-container {
@@ -57,27 +57,27 @@ button:active {
   justify-content: space-between;
 }
 .menu-list button {
-  height: 42px;
   width: 42px;
+  height: 42px;
   padding: 4px;
 }
 
 .search-field {
   display: flex;
   flex-direction: row;
-  background-color: rgba(211, 211, 211, 0.3);
-  height: 32px;
   width: 100%;
+  height: 32px;
+  background-color: rgba(211, 211, 211, 0.3);
 }
 .search-field input {
-  outline: none;
+  padding: 4px;
   border: none;
   background: none;
+  outline: none;
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
   flex-grow: 1;
-  padding: 4px;
   text-indent: 8px;
 }
 .search-field button {
@@ -85,38 +85,49 @@ button:active {
   height: 32px;
 }
 
-.memo-list-container .memo-list {
+.memo-list-container #memo-list {
   display: flex;
   flex-direction: column-reverse;
-  gap: 12px;
+  list-style: none;
 }
-.memo-list-container .memo-list .memo-item {
-  background-color: #fff7d1;
+.memo-list-container #memo-list .memo-item {
   width: 100%;
-  font-size: 14px;
+  height: 100%;
   padding: 12px;
-  transition: all 0.2 cubic-bezier(0.075, 0.82, 0.165, 1);
+  margin-bottom: 12px;
+  background-color: #fff7d1;
+  font-size: 14px;
+  -webkit-animation: itemShow 0.2s forwards;
+          animation: itemShow 0.2s forwards;
+  transform-origin: top center;
 }
-.memo-list-container .memo-list .memo-item p.updated-date {
-  text-align: end;
+.memo-list-container #memo-list .memo-item p.updated-date {
   font-size: 8px;
+  text-align: end;
   pointer-events: none;
 }
-.memo-list-container .memo-list .memo-item .memo-content {
+.memo-list-container #memo-list .memo-item .memo-content {
+  overflow: hidden;
   font-size: 14px;
   max-height: calc(5em + 8px + 12px + 2px);
-  overflow: hidden;
   pointer-events: none;
 }
-.memo-list-container .memo-list .memo-item:hover {
+.memo-list-container #memo-list .memo-item:hover {
   filter: brightness(95%);
 }
-.memo-list-container .memo-list .memo-item.no-item {
+.memo-list-container #memo-list .memo-item.no-item {
   border: 1px solid lightgray;
   background-color: rgba(211, 211, 211, 0.3);
 }
-.memo-list-container .memo-list .memo-item.no-item p {
+.memo-list-container #memo-list .memo-item.no-item p {
   text-align: center;
+}
+.memo-list-container #memo-list .memo-item.hide {
+  padding: 0px 12px;
+  margin-bottom: 0px;
+  -webkit-animation: itemHide 0.2s forwards;
+          animation: itemHide 0.2s forwards;
+  transition: all 0.2s ease-in-out;
 }
 
 span.size-24 {
@@ -142,17 +153,17 @@ span.size-48 {
 div#modal-container {
   display: none;
   flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
   background-color: rgba(128, 128, 128, 0.9);
+  justify-content: center;
+  align-items: center;
   z-index: 1;
   scroll-behavior: none;
-  overflow: hidden;
 }
 div#modal-container div.close-field {
   position: absolute;
@@ -161,23 +172,23 @@ div#modal-container div.close-field {
 }
 div#modal-container .content-section {
   width: 400px;
-  max-width: 400px;
-  box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.2);
   -webkit-animation: fadeIn 0.2s forwards;
           animation: fadeIn 0.2s forwards;
+  max-width: 400px;
+  box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.2);
 }
 div#modal-container .content-section .memo-item {
-  background-color: #fff7d1;
   width: 100%;
-  font-size: 14px;
   padding: 12px;
+  background-color: #fff7d1;
+  font-size: 14px;
 }
 div#modal-container .content-section .memo-item textarea {
   width: 100%;
   height: 100%;
-  outline: none;
   border: none;
   background: none;
+  outline: none;
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
@@ -190,23 +201,23 @@ div#modal-container.opened {
 
 div#popup-menu {
   display: none;
-  background-color: aliceblue;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
   width: 100px;
   padding: 5px 0;
-  box-shadow: 0 0 14px 2px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background-color: aliceblue;
   -webkit-animation: fadeIn 0.2s forwards;
           animation: fadeIn 0.2s forwards;
+  border-radius: 3px;
+  box-shadow: 0 0 14px 2px rgba(0, 0, 0, 0.1);
 }
 div#popup-menu .popup-content {
   display: flex;
   flex-direction: column;
 }
 div#popup-menu .popup-content button {
-  font-weight: bolder;
-  font-size: 14px;
   height: 32px;
+  font-size: 14px;
+  font-weight: bolder;
 }
 div#popup-menu.show {
   display: block;
@@ -273,30 +284,4 @@ div#popup-menu.show {
     transform: scale(0);
     opacity: 0;
   }
-}
-#test-div {
-  display: block;
-  width: 100px;
-  height: -webkit-fit-content;
-  height: -moz-fit-content;
-  height: fit-content;
-  margin: 0 auto;
-}
-#test-div ul {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: height 0.1s linear;
-}
-#test-div li {
-  display: block;
-  background-color: lightcoral;
-  padding: 12px;
-  width: 100%;
-  -webkit-animation: itemShow 0.2s forwards;
-          animation: itemShow 0.2s forwards;
-}
-#test-div li.hide {
-  -webkit-animation: itemHide 0.2s forwards;
-          animation: itemHide 0.2s forwards;
 }
